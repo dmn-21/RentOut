@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RentOut.Infrastructure\RentOut.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
