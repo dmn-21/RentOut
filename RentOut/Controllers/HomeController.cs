@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RentOut.Core.Models.Home;
 using RentOut.Models;
 using System.Diagnostics;
 
@@ -12,14 +13,11 @@ namespace RentOut.Controllers
         {
             _logger = logger;
         }
-
+        
         public IActionResult Index()
         {
-            return View();
-        }
+            var model = new IndexViewModel();
 
-        public IActionResult Privacy()
-        {
             return View();
         }
 
