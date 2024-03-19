@@ -1,7 +1,13 @@
-﻿@model CarDetailsViewModel
+﻿@model CarFormModel
 @{
     ViewData["Title"] = "Add Car";
 }
 
 <h2 class="text-center">@ViewData["Title"]</h2>
 <hr />
+
+<partial name="_CarFormPartial" model="@Model" />
+
+@section Scripts {
+    <parial name="_ValidationScriptsPartial" />
+}
