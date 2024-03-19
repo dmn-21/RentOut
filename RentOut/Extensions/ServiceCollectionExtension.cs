@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using RentOut.Core.Services;
 using RentOut.Infrastructure.Data;
+using RentOut.Infrastructure.Data.Common;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using RentOut.Core.Contracts;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -8,6 +11,9 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddAplicationServices(this IServiceCollection services)
         {
+            services.AddScoped<ICarService, CarService>();
+            services.AddScoped<IRentierService, RentierService>();
+
             return services;
         }
 
@@ -16,6 +22,8 @@ namespace Microsoft.Extensions.DependencyInjection
             var connectionString = config.GetConnectionString("DefaultConnection");
             services.AddDbContext<CarRentingDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            services.AddScoped<IRepository, Repository>();
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
