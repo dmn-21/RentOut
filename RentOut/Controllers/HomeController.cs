@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using RentOut.Core.Contracts;
 using RentOut.Core.Models.Home;
 using RentOut.Models;
 using System.Diagnostics;
@@ -8,19 +10,25 @@ namespace RentOut.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ICarService _carService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(
+            ILogger<HomeController> logger,
+            ICarService carService)
         {
             _logger = logger;
+            _carService = carService;
         }
-        
-        public IActionResult Index()
+
+        [AllowAnonymous]
+        public async Task<IActionResult> Index()
         {
-            var model = new IndexViewModel();
+            var model = await _carService.LastTwoCarsAsync();
 
-            return View();
+            return View(model);
         }
 
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
