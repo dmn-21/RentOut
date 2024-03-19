@@ -1,9 +1,14 @@
+using RentOut.ModelBinders;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAplicationDbContext(builder.Configuration);
 builder.Services.AddAplicationIdentity(builder.Configuration);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
+});
 
 builder.Services.AddAplicationServices();
 
