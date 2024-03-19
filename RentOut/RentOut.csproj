@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RentOut.Core\RentOut.Core.csproj" />
+    <ProjectReference Include="..\RentOut.Infrastructure\RentOut.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
