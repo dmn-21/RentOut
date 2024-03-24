@@ -24,9 +24,18 @@ namespace RentOut.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> All()
+        public async Task<IActionResult> All([FromQuery] AllCarsQueryModel model)
         {
-            var model = new AllCarsQueryModel();
+            var cars = await carService.AllAsync(
+                model.Category,
+                model.SearchTerm,
+                model.Sorting,
+                model.CurrentPage,
+                model.CarsPerPage);
+
+            model.TotalCarsCount = cars.TotalCarsCount;
+            model.Cars = cars.Cars;
+            model.Categories = await carService.AllCategoriesNamesAsync();
 
             return View(model);
         }
@@ -34,7 +43,18 @@ namespace RentOut.Controllers
         [HttpGet]
         public async Task<IActionResult> Mine()
         {
-            var model = new AllCarsQueryModel();
+            var userId = User.Id();
+            IEnumerable<CarServiceModel> model;
+
+            if (await rentierService.ExistByIdAsync(userId))
+            {
+                int rentierId = await rentierService.GetRentierIdAsync(userId) ?? 0;
+                model = await carService.AllCarsByRentierIdAsync(rentierId);
+            }
+            else
+            {
+                model = await carService.AllCarsByUserId(userId);
+            }
 
             return View(model);
         }
@@ -42,7 +62,12 @@ namespace RentOut.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var model = new CarDetailsViewModel();
+            if (await carService.ExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+
+            var model = await carService.CarDetailsByIdAsync(id);
 
             return View(model);
         }
@@ -85,7 +110,17 @@ namespace RentOut.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var model = new CarFormModel();
+            if (await carService.ExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+
+            if (await carService.HasRentierWithIdAsync(id, User.Id()) == false)
+            {
+                return Unauthorized();
+            }
+
+            var model = await carService.GetCarFormModelByIdAsync(id);
 
             return View(model);
         }
@@ -93,7 +128,31 @@ namespace RentOut.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id, CarFormModel model)
         {
-            return RedirectToAction(nameof(Details), new { id = 1 });
+            if (await carService.ExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+
+            if (await carService.HasRentierWithIdAsync(id, User.Id()) == false)
+            {
+                return Unauthorized();
+            }
+
+            if (await carService.CategoryExistsAsync(model.CategoryId) == false)
+            {
+                ModelState.AddModelError(nameof(model.CategoryId), "Category does not exist");
+            }
+
+            if (ModelState.IsValid == false)
+            {
+                model.Categories = await carService.AllCategoriesAsync();
+
+                return View(model);
+            }
+
+            await carService.EditAsync(id, model);
+
+            return RedirectToAction(nameof(Details), new { id });
         }
 
         [HttpGet]
