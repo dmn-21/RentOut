@@ -104,9 +104,27 @@ namespace RentOut.Core.Services
                .ToListAsync();
         }
 
-        public Task<CarDetailsServiceModel> CarDetailsByIdAsync(int id)
+        public async Task<CarDetailsServiceModel> CarDetailsByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await repository.AllReadOnly<Car>()
+                .Where(h => h.Id == id)
+                .Select(h => new CarDetailsServiceModel()
+                {
+                    Id = h.Id,
+                    Town = h.Town,
+                    Rentier = new Models.Rentier.RentierServiceModel()
+                    {
+                        Email = h.Rentier.User.Email,
+                        PhoneNumber = h.Rentier.PhoneNumber,
+                    },
+                    Category = h.Category.Name,
+                    Description = h.Description,
+                    ImageUrl = h.ImageUrl,
+                    IsRented = h.RenterId != null,
+                    PricePerDay = h.PricePerDay,
+                    Title = h.Title
+                })
+                .FirstAsync();
         }
 
         public async Task<bool> CategoryExistsAsync(int categoryId)
