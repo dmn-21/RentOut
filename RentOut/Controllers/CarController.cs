@@ -4,6 +4,8 @@ using RentOut.Core.Models.Car;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using RentOut.Core.Exceptions;
+using RentOut.Core.Extensions;
 
 namespace RentOut.Controllers
 {
@@ -13,13 +15,16 @@ namespace RentOut.Controllers
 
         private readonly IRentierService rentierService;
 
+        private readonly ILogger logger;
+
         public CarController(
             ICarService _carService,
-            IRentierService _rentierService)
+            IRentierService _rentierService,
+            ILogger<CarController> _logger)
         {
             carService = _carService;
             rentierService = _rentierService;
-
+            logger = _logger;
         }
 
         [AllowAnonymous]
@@ -60,7 +65,7 @@ namespace RentOut.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, string information)
         {
             if (await carService.ExistsAsync(id) == false)
             {
@@ -68,6 +73,11 @@ namespace RentOut.Controllers
             }
 
             var model = await carService.CarDetailsByIdAsync(id);
+
+            if (information != model.GetInformation())
+            {
+                return BadRequest();
+            }
 
             return View(model);
         }
@@ -90,7 +100,7 @@ namespace RentOut.Controllers
         {
             if (await carService.CategoryExistsAsync(model.CategoryId) == false)
             {
-                ModelState.AddModelError(nameof(model.CategoryId), "");
+                ModelState.AddModelError(nameof(model.CategoryId), "Category does not exist");
             }
 
             if (ModelState.IsValid == false)
@@ -104,7 +114,7 @@ namespace RentOut.Controllers
 
             int newCarId = await carService.CreateAsync(model, rentierId ?? 0);
 
-            return RedirectToAction(nameof(Details), new { id = newCarId });
+            return RedirectToAction(nameof(Details), new { id = newCarId, information = model.GetInformation() });
         }
 
         [HttpGet]
@@ -152,13 +162,31 @@ namespace RentOut.Controllers
 
             await carService.EditAsync(id, model);
 
-            return RedirectToAction(nameof(Details), new { id });
+            return RedirectToAction(nameof(Details), new { id, information = model.GetInformation() });
         }
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var model = new CarDetailsViewModel();
+            if (await carService.ExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+
+            if (await carService.HasRentierWithIdAsync(id, User.Id()) == false)
+            {
+                return Unauthorized();
+            }
+
+            var car = await carService.CarDetailsByIdAsync(id);
+
+            var model = new CarDetailsViewModel()
+            {
+                Id = id,
+                Town = car.Town,
+                ImageUrl = car.ImageUrl,
+                Title = car.Title
+            };
 
             return View(model);
         }
@@ -166,19 +194,64 @@ namespace RentOut.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(CarDetailsViewModel model)
         {
+            if (await carService.ExistsAsync(model.Id) == false)
+            {
+                return BadRequest();
+            }
+
+            if (await carService.HasRentierWithIdAsync(model.Id, User.Id()) == false)
+            {
+                return Unauthorized();
+            }
+
+            await carService.DeleteAsync(model.Id);
+
             return RedirectToAction(nameof(All));
         }
 
         [HttpPost]
         public async Task<IActionResult> Rent(int id)
         {
-            return RedirectToAction(nameof(Mine));
+            if (await carService.ExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+
+            if (await rentierService.ExistByIdAsync(User.Id()))
+            {
+                return Unauthorized();
+            }
+
+            if (await carService.IsRentedAsync(id))
+            {
+                return BadRequest();
+            }
+
+            await carService.RentAsync(id, User.Id());
+
+            return RedirectToAction(nameof(All));
         }
 
         [HttpPost]
         public async Task<IActionResult> Leave(int id)
         {
-            return RedirectToAction(nameof(Mine));
+            if (await carService.ExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await carService.LeaveAsync(id, User.Id());
+            }
+            catch (UnauthorizedActionException uae)
+            {
+                logger.LogError(uae, "CarController/Leave");
+
+                return Unauthorized();
+            }
+
+            return RedirectToAction(nameof(All));
         }
     }
 }
