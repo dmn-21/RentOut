@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using RentOut.Core.Contracts;
+using System.ComponentModel.DataAnnotations;
 using static RentOut.Core.Constants.MessageConstants;
 using static RentOut.Infrastructure.Constants.DataConstants;
 
 namespace RentOut.Core.Models.Car
 {
-    public class CarServiceModel
+    public class CarServiceModel : ICarModel
     {
         public int Id { get; set; }
 

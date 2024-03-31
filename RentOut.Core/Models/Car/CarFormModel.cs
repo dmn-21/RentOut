@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using RentOut.Core.Contracts;
+using System.ComponentModel.DataAnnotations;
 using static RentOut.Core.Constants.MessageConstants;
 using static RentOut.Infrastructure.Constants.DataConstants;
 
 
 namespace RentOut.Core.Models.Car
 {
-    public class CarFormModel
+    public class CarFormModel : ICarModel
     {
         [Required(ErrorMessage = RequiredMessage)]
         [StringLength(CarTitleMaxLength,
