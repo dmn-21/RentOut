@@ -1,4 +1,6 @@
 ﻿@model CarDetailsServiceModel
+@inject IRentierService rentierService
+@inject ICarService carService
 @{
     ViewBag.Title = "Car Details";
 }
@@ -23,11 +25,14 @@
             <div class="form-inline">
                 @if (this.User.Identity.IsAuthenticated)
                 {
-                    <a class="btn btn-warning" asp-controller="Car" aspaction="Edit"
-                       asp-route-id="@Model.Id">Edit</a>
-                    <a class="ml-2 btn btn-danger" asp-controller="Car" aspaction="Delete"
-                       asp-route-id="@Model.Id">Delete</a>
-                    @if (!Model.IsRented)
+                    if (await carService.HasRentierWithIdAsync(Model.Id, User.Id()))
+                    {
+                        <a class="btn btn-warning" asp-controller="Car" aspaction="Edit"
+                           asp-route-id="@Model.Id">Edit</a>
+                        <a class="ml-2 btn btn-danger" asp-controller="Car" aspaction="Delete"
+                           asp-route-id="@Model.Id">Delete</a>
+                    }
+                    @if (!Model.IsRented && (await rentierService.ExistByIdAsync(User.Id())) == false)
                     {
                         <form class="ml-2" asp-controller="Car"
                               asp-action="Rent" asp-route-id="@Model.Id"
@@ -36,7 +41,7 @@
                                    value="Rent" />
                         </form>
                     }
-                    else
+                    else if (await carService.IsRentedByIUserWithIdAsync(Model.Id, User.Id()))
                     {
                         <form class="ml-2" asp-controller="Car" asp-action="Leave"
                               asp-route-id="@Model.Id" method="post">
