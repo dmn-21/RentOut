@@ -1,7 +1,11 @@
 using RentOut.ModelBinders;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using RentOut.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("CarRentingDbContextConnection") ?? throw new InvalidOperationException("Connection string 'CarRentingDbContextConnection' not found.");
 
 builder.Services.AddAplicationDbContext(builder.Configuration);
 builder.Services.AddAplicationIdentity(builder.Configuration);
