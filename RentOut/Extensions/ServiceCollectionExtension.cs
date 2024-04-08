@@ -4,6 +4,7 @@ using RentOut.Infrastructure.Data.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RentOut.Core.Contracts;
+using RentOut.Infrastructure.Data.Models;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -34,7 +35,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddAplicationIdentity(this IServiceCollection services, IConfiguration config)
         {
             services
-                .AddDefaultIdentity<IdentityUser>(options =>
+                .AddDefaultIdentity<ApplicationUser>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
                     options.Password.RequireNonAlphanumeric = false;

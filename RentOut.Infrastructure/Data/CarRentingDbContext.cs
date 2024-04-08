@@ -5,7 +5,7 @@ using RentOut.Infrastructure.Data.SeedDb;
 
 namespace RentOut.Infrastructure.Data
 {
-    public class CarRentingDbContext : IdentityDbContext
+    public class CarRentingDbContext : IdentityDbContext<ApplicationUser>
     {
         public CarRentingDbContext(DbContextOptions<CarRentingDbContext> options)
             : base(options)
