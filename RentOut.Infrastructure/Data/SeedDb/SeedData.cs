@@ -5,9 +5,9 @@ namespace RentOut.Infrastructure.Data.SeedDb
 {
     internal class SeedData
     {
-        public IdentityUser RentierUser { get; set; }
+        public ApplicationUser RentierUser { get; set; }
 
-        public IdentityUser GuestUser { get; set; }
+        public ApplicationUser GuestUser { get; set; }
 
         public Rentier Rentier { get; set; }
 
@@ -43,9 +43,9 @@ namespace RentOut.Infrastructure.Data.SeedDb
 
         private void SeedUsers()
         {
-            var hasher = new PasswordHasher<IdentityUser>();
+            var hasher = new PasswordHasher<ApplicationUser>();
 
-            RentierUser = new IdentityUser()
+            RentierUser = new ApplicationUser()
             {
                 Id = "dea12856-c198-4129-b3f3-b893d8395082",
                 UserName = "rentier@mail.com",
@@ -57,7 +57,7 @@ namespace RentOut.Infrastructure.Data.SeedDb
             RentierUser.PasswordHash =
                 hasher.HashPassword(RentierUser, "rentier123");
 
-            GuestUser = new IdentityUser()
+            GuestUser = new ApplicationUser()
             {
                 Id = "6d5800ce-d726-4fc8-83d9-d6b3ac1f591e",
                 UserName = "guest@mail.com",
