@@ -43,7 +43,14 @@ namespace Microsoft.Extensions.DependencyInjection
                     options.Password.RequireLowercase = false;
                     options.Password.RequireUppercase = false;
                 })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<CarRentingDbContext>();
+
+            services.AddAuthentication()
+                .AddCookie(options =>
+                {
+                    options.LoginPath = PathString.FromUriComponent("Account/Login");
+                });
 
             return services;
         }
