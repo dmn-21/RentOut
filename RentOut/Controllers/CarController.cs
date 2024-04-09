@@ -125,7 +125,8 @@ namespace RentOut.Controllers
                 return BadRequest();
             }
 
-            if (await carService.HasRentierWithIdAsync(id, User.Id()) == false)
+            if (await carService.HasRentierWithIdAsync(id, User.Id()) == false
+                && User.IsAdmin() == false)
             {
                 return Unauthorized();
             }
@@ -143,7 +144,8 @@ namespace RentOut.Controllers
                 return BadRequest();
             }
 
-            if (await carService.HasRentierWithIdAsync(id, User.Id()) == false)
+            if (await carService.HasRentierWithIdAsync(id, User.Id()) == false
+                && User.IsAdmin() == false)
             {
                 return Unauthorized();
             }
@@ -173,7 +175,8 @@ namespace RentOut.Controllers
                 return BadRequest();
             }
 
-            if (await carService.HasRentierWithIdAsync(id, User.Id()) == false)
+            if (await carService.HasRentierWithIdAsync(id, User.Id()) == false
+                && User.IsAdmin() == false)
             {
                 return Unauthorized();
             }
@@ -199,7 +202,8 @@ namespace RentOut.Controllers
                 return BadRequest();
             }
 
-            if (await carService.HasRentierWithIdAsync(model.Id, User.Id()) == false)
+            if (await carService.HasRentierWithIdAsync(model.Id, User.Id()) == false
+                && User.IsAdmin() == false)
             {
                 return Unauthorized();
             }
@@ -217,7 +221,8 @@ namespace RentOut.Controllers
                 return BadRequest();
             }
 
-            if (await rentierService.ExistByIdAsync(User.Id()))
+            if (await rentierService.ExistByIdAsync(User.Id())
+                && User.IsAdmin() == false)
             {
                 return Unauthorized();
             }
