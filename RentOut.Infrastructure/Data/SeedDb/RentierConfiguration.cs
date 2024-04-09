@@ -10,7 +10,7 @@ namespace RentOut.Infrastructure.Data.SeedDb
         {
             var data = new SeedData();
 
-            builder.HasData(new Rentier[] { data.Rentier });
+            builder.HasData(new Rentier[] { data.Rentier, data.AdminRentier });
         }
     }
 }

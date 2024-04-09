@@ -9,7 +9,11 @@ namespace RentOut.Infrastructure.Data.SeedDb
 
         public ApplicationUser GuestUser { get; set; }
 
+        public ApplicationUser AdminUser { get; set; }
+
         public Rentier Rentier { get; set; }
+
+        public Rentier AdminRentier { get; set; }
 
         public Category ElectricCategory { get; set; }
 
@@ -68,6 +72,21 @@ namespace RentOut.Infrastructure.Data.SeedDb
 
             GuestUser.PasswordHash =
                 hasher.HashPassword(RentierUser, "guest123");
+
+            AdminUser = new ApplicationUser()
+            {
+                Id = "999313c4-67e6-492f-ae95-c63caebfc2c7",
+                UserName = "admin@mail.com",
+                NormalizedUserName = "ADMIN@MAIL.COM",
+                Email = "admin@mail.com",
+                NormalizedEmail = "ADMIN@MAIL.COM",
+                FirstName = "Great",
+                LastName = "Admin",
+
+            };
+
+            AdminUser.PasswordHash =
+            hasher.HashPassword(AdminUser, "admin123");
         }
 
         private void SeedRentiers()
@@ -77,6 +96,13 @@ namespace RentOut.Infrastructure.Data.SeedDb
                 Id = 1,
                 PhoneNumber = "+359888888888",
                 UserId = RentierUser.Id
+            };
+
+            AdminRentier = new Rentier()
+            {
+                Id = 4,
+                PhoneNumber = "+35988888888",
+                UserId = AdminUser.Id
             };
         }
         private void SeedCategories()

@@ -11,7 +11,7 @@ namespace RentOut.Infrastructure.Data.SeedDb
         {
             var data = new SeedData();
 
-            builder.HasData(new ApplicationUser[] { data.RentierUser, data.GuestUser });
+            builder.HasData(new ApplicationUser[] { data.RentierUser, data.GuestUser, data.AdminUser });
         }
     }
 }
