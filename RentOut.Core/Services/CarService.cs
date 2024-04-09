@@ -113,6 +113,7 @@ namespace RentOut.Core.Services
                     Town = h.Town,
                     Rentier = new Models.Rentier.RentierServiceModel()
                     {
+                        FullName = $"{h.Rentier.User.FirstName} {h.Rentier.User.LastName}",
                         Email = h.Rentier.User.Email,
                         PhoneNumber = h.Rentier.PhoneNumber,
                     },
