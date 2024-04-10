@@ -1,4 +1,4 @@
-﻿namespace RentOut.Core.Constants
+﻿namespace RentOut.Infrastructure.Constants
 {
     public static class CustomClaims
     {

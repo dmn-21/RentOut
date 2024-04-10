@@ -18,6 +18,7 @@ namespace RentOut.Infrastructure.Data
             builder.ApplyConfiguration(new RentierConfiguration());
             builder.ApplyConfiguration(new CategoryConfiguration());
             builder.ApplyConfiguration(new CarConfiguration());
+            builder.ApplyConfiguration(new UserClaimsConfiguration());
 
             base.OnModelCreating(builder);
         }
