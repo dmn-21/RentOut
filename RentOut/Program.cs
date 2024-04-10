@@ -46,10 +46,14 @@ app.UseEndpoints(endpoints =>
         pattern: "/Car/Details/{id}/{information}",
         defaults: new { Controller = "Car", Action = "Details" }
     );
+    endpoints.MapControllerRoute(
+            name: "areas",
+            pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+          );
+
     endpoints.MapDefaultControllerRoute();
     endpoints.MapRazorPages();
 });
 
 await app.CreateAdminRoleAsync();
-
 await app.RunAsync();
