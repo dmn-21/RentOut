@@ -25,7 +25,8 @@ namespace RentOut.Core.Services
             int currentPage = 1,
             int carsPerPage = 1)
         {
-            var carToShow = repository.AllReadOnly<Car>();
+            var carToShow = repository.AllReadOnly<Car>()
+                .Where(c => c.IsApproved);
 
             if (category != null)
             {
@@ -71,6 +72,7 @@ namespace RentOut.Core.Services
         public async Task<IEnumerable<CarServiceModel>> AllCarsByRentierIdAsync(int rentierId)
         {
             return await repository.AllReadOnly<Car>()
+                .Where(c => c.IsApproved)
                 .Where(h => h.RentierId == rentierId)
                 .ProjectToCarServiceModel()
                 .ToListAsync();
@@ -79,6 +81,7 @@ namespace RentOut.Core.Services
         public async Task<IEnumerable<CarServiceModel>> AllCarsByUserId(string userId)
         {
             return await repository.AllReadOnly<Car>()
+                .Where(c => c.IsApproved)
                 .Where(h => h.RenterId == userId)
                 .ProjectToCarServiceModel()
                 .ToListAsync();
@@ -106,6 +109,7 @@ namespace RentOut.Core.Services
         public async Task<CarDetailsServiceModel> CarDetailsByIdAsync(int id)
         {
             return await repository.AllReadOnly<Car>()
+                .Where(c => c.IsApproved)
                 .Where(h => h.Id == id)
                 .Select(h => new CarDetailsServiceModel()
                 {
@@ -240,6 +244,7 @@ namespace RentOut.Core.Services
         {
             return await repository
                 .AllReadOnly<Car>()
+                .Where(c => c.IsApproved)
                 .OrderByDescending(h => h.Id)
                 .Take(2)
                 .Select(h => new CarIndexServiceModel()

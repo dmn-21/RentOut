@@ -47,6 +47,9 @@ namespace RentOut.Infrastructure.Data.Models
         [Comment("User id of the renter")]
         public string? RenterId { get; set; }
 
+        [Comment("Is car approved by admin")]
+        public bool IsApproved { get; set; }
+
         [ForeignKey(nameof(CategoryId))]
         public Category Category { get; set; } = null!;
 
