@@ -1,11 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using RentOut.Infrastructure.Data.Models;
+using static RentOut.Infrastructure.Constants.CustomClaims;
 
 namespace RentOut.Infrastructure.Data.SeedDb
 {
     internal class SeedData
     {
         public ApplicationUser RentierUser { get; set; }
+
+        public IdentityUserClaim<string> RentierUserClaim { get; set; }
+
+        public IdentityUserClaim<string> GuestUserClaim { get; set; }
+
+        public IdentityUserClaim<string> AdminUserClaim { get; set; }
 
         public ApplicationUser GuestUser { get; set; }
 
@@ -58,6 +65,14 @@ namespace RentOut.Infrastructure.Data.SeedDb
                 NormalizedEmail = "rentier@mail.com"
             };
 
+            RentierUserClaim = new IdentityUserClaim<string>
+            {
+                Id = 44,
+                ClaimType = UserFullNameClaim,
+                ClaimValue = "Rentier Rentierov",
+                UserId = "dea12856-c198-4129-b3f3-b893d8395082"
+            };
+
             RentierUser.PasswordHash =
                 hasher.HashPassword(RentierUser, "rentier123");
 
@@ -83,6 +98,14 @@ namespace RentOut.Infrastructure.Data.SeedDb
                 FirstName = "Great",
                 LastName = "Admin",
 
+            };
+
+            AdminUserClaim = new IdentityUserClaim<string>
+            {
+                Id = 88,
+                ClaimType = UserFullNameClaim,
+                ClaimValue = "Great Admin",
+                UserId = "999313c4-67e6-492f-ae95-c63caebfc2c7"
             };
 
             AdminUser.PasswordHash =
