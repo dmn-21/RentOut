@@ -18,6 +18,7 @@ namespace RentOut.Core.Services
         public async Task<StatisticServiceModel> TotalAsync()
         {
             int totalCars = await repository.AllReadOnly<Car>()
+                .Where(c => c.IsApproved)
                 .CountAsync();
 
             int totalRents = await repository.AllReadOnly<Car>()
