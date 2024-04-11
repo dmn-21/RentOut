@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
-using static RentOut.Core.Constants.RoleConstants;
+using static RentOut.Core.Constants.AdministratorConstants;
 
 namespace RentOut.Areas.Identity.Pages.Account
 {
