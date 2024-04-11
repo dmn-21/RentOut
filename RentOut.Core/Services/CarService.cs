@@ -106,6 +106,18 @@ namespace RentOut.Core.Services
                .ToListAsync();
         }
 
+        public async Task ApproveCarAsync(int carId)
+        {
+            var car = await repository.GetByIdAsync<Car>(carId);
+
+            if (car != null && car.IsApproved == false)
+            {
+                car.IsApproved = true;
+
+                await repository.SaveChangesAsync();
+            }
+        }
+
         public async Task<CarDetailsServiceModel> CarDetailsByIdAsync(int id)
         {
             return await repository.AllReadOnly<Car>()
@@ -206,6 +218,21 @@ namespace RentOut.Core.Services
             }
 
             return car;
+        }
+
+        public async Task<IEnumerable<CarServiceModel>> GetUnApprovedAsync()
+        {
+            return await repository.AllReadOnly<Car>()
+                .Where(c => c.IsApproved == false)
+                .Select(c => new CarServiceModel()
+                {
+                    Town = c.Town,
+                    Id = c.Id,
+                    ImageUrl = c.ImageUrl,
+                    PricePerDay = c.PricePerDay,
+                    Title = c.Title
+                })
+                .ToListAsync();
         }
 
         public async Task<bool> HasRentierWithIdAsync(int carId, string userId)

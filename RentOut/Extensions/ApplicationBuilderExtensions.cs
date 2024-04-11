@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using RentOut.Infrastructure.Data.Models;
-using static RentOut.Core.Constants.RoleConstants;
+using static RentOut.Core.Constants.AdministratorConstants;
 
 namespace Microsoft.AspNetCore.Builder
 {

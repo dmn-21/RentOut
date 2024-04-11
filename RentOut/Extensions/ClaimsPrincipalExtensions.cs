@@ -1,4 +1,4 @@
-﻿using static RentOut.Core.Constants.RoleConstants;
+﻿using static RentOut.Core.Constants.AdministratorConstants;
 
 namespace System.Security.Claims
 {

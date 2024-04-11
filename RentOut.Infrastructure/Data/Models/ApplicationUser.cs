@@ -15,5 +15,7 @@ namespace RentOut.Infrastructure.Data.Models
         [MaxLength(UserLastNameMaxLength)]
         [PersonalData]
         public string LastName { get; set; } = string.Empty;
+
+        public Rentier? Rentier { get; set; }
     }
 }

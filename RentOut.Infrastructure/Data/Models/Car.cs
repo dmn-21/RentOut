@@ -55,5 +55,8 @@ namespace RentOut.Infrastructure.Data.Models
 
         [ForeignKey(nameof(RentierId))]
         public Rentier Rentier { get; set; } = null!;
+
+        [ForeignKey(nameof(RenterId))]
+        public ApplicationUser? Renter { get; set; }
     }
 }

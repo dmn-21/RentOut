@@ -46,10 +46,15 @@ namespace RentOut.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Mine()
+        public async Task<IActionResult> Mine() //3:05-3:00 fix bugs
         {
             var userId = User.Id();
             IEnumerable<CarServiceModel> model;
+
+            if (User.IsAdmin())
+            {
+                return RedirectToAction("Mine", "Cars", new { area = "Admin" });
+            }
 
             if (await rentierService.ExistByIdAsync(userId))
             {
