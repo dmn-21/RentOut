@@ -121,7 +121,6 @@ namespace RentOut.Core.Services
         public async Task<CarDetailsServiceModel> CarDetailsByIdAsync(int id)
         {
             return await repository.AllReadOnly<Car>()
-                .Where(c => c.IsApproved)
                 .Where(h => h.Id == id)
                 .Select(h => new CarDetailsServiceModel()
                 {

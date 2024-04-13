@@ -26,28 +26,28 @@
                 @if (this.User.Identity.IsAuthenticated)
                 {
                     if (await carService.HasRentierWithIdAsync(Model.Id, User.Id())
-                        || User.IsAdmin())
+                    || User.IsAdmin())
                     {
-                        <a class="btn btn-warning" asp-controller="Car" aspaction="Edit"
-                           asp-route-id="@Model.Id">Edit</a>
-                        <a class="ml-2 btn btn-danger" asp-controller="Car" aspaction="Delete"
-                           asp-route-id="@Model.Id">Delete</a>
+                        <a asp-area="" asp-controller="Car" asp-action="Edit" asp-route-id="@Model.Id"
+                           class="btn btn-warning">Edit</a>
+
+                        <a asp-area="" asp-controller="Car" asp-action="Delete" asp-route-id="@Model.Id"
+                           class="btn btn-danger">Delete</a>
                     }
+
+                    <p></p>
                     @if (!Model.IsRented && ((await rentierService.ExistByIdAsync(User.Id())) == false || User.IsAdmin()))
                     {
-                        <form class="ml-2" asp-controller="Car"
-                              asp-action="Rent" asp-route-id="@Model.Id"
-                              method="post">
-                            <input class="btn btn-primary" type="submit"
-                                   value="Rent" />
+                        <form class="input-group-sm" asp-controller="Car"
+                              asp-area="" asp-action="Rent" asp-route-id="@Model.Id" method="post">
+                            <input class="btn btn-primary" type="submit" value="Rent" />
                         </form>
                     }
                     else if (await carService.IsRentedByIUserWithIdAsync(Model.Id, User.Id()))
                     {
-                        <form class="ml-2" asp-controller="Car" asp-action="Leave"
+                        <form asp-area="" asp-controller="Car" asp-action="Leave"
                               asp-route-id="@Model.Id" method="post">
-                            <input class="btn btn-primary" type="submit"
-                                   value="Leave" />
+                            <input class="btn btn-primary" type="submit" value="Leave" />
                         </form>
                     }
                 }

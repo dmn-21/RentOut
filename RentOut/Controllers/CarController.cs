@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using RentOut.Core.Exceptions;
 using RentOut.Core.Extensions;
+using RentOut.Core.Constants;
+using static RentOut.Core.Constants.MessageConstants;
 
 namespace RentOut.Controllers
 {
@@ -119,6 +121,8 @@ namespace RentOut.Controllers
 
             int newCarId = await carService.CreateAsync(model, rentierId ?? 0);
 
+            TempData[UserMessageSuccess] = "You successfully added a car!";
+
             return RedirectToAction(nameof(Details), new { id = newCarId, information = model.GetInformation() });
         }
 
@@ -169,6 +173,8 @@ namespace RentOut.Controllers
 
             await carService.EditAsync(id, model);
 
+            TempData[UserMessageSuccess] = "You successfully edited a car!";
+
             return RedirectToAction(nameof(Details), new { id, information = model.GetInformation() });
         }
 
@@ -215,6 +221,8 @@ namespace RentOut.Controllers
 
             await carService.DeleteAsync(model.Id);
 
+            TempData[UserMessageSuccess] = "You successfully deleted a car!";
+
             return RedirectToAction(nameof(All));
         }
 
@@ -239,6 +247,8 @@ namespace RentOut.Controllers
 
             await carService.RentAsync(id, User.Id());
 
+            TempData[UserMessageSuccess] = "You successfully rented a car!";
+
             return RedirectToAction(nameof(All));
         }
 
@@ -260,6 +270,8 @@ namespace RentOut.Controllers
 
                 return Unauthorized();
             }
+
+            TempData[UserMessageSuccess] = "You successfully left a car!";
 
             return RedirectToAction(nameof(All));
         }

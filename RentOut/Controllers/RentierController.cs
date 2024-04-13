@@ -46,6 +46,8 @@ namespace RentOut.Controllers
 
             await rentierService.CreateAsync(User.Id(), model.PhoneNumber);
 
+            TempData[UserMessageSuccess] = "You successfully become a rentier!";
+
             return RedirectToAction(nameof(CarController.All), "Car");
         }
     }
