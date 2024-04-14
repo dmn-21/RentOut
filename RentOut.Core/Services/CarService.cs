@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RentOut.Core.Contracts;
 using RentOut.Core.Enumeration;
 using RentOut.Core.Exceptions;
@@ -13,9 +14,14 @@ namespace RentOut.Core.Services
     {
         private readonly IRepository repository;
 
-        public CarService(IRepository _repository)
+        private readonly ILogger logger;
+
+        public CarService(
+            IRepository _repository,
+            ILogger<CarService> _logger)
         {
             repository = _repository;
+            logger = _logger;
         }
 
         public async Task<CarQueryServiceModel> AllAsync(
@@ -271,14 +277,14 @@ namespace RentOut.Core.Services
             return await repository
                 .AllReadOnly<Car>()
                 .Where(c => c.IsApproved)
-                .OrderByDescending(h => h.Id)
+                .OrderByDescending(c => c.Id)
                 .Take(2)
-                .Select(h => new CarIndexServiceModel()
+                .Select(c => new CarIndexServiceModel()
                 {
-                    Id = h.Id,
-                    Town = h.Town,
-                    ImageUrl = h.ImageUrl,
-                    Title = h.Title,
+                    Id = c.Id,
+                    Town = c.Town,
+                    ImageUrl = c.ImageUrl,
+                    Title = c.Title,
                 })
                 .ToListAsync();
         }

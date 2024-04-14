@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RentOut.Core.Contracts;
 using RentOut.Infrastructure.Data.Models;
+using RentOut.Core.Exceptions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
