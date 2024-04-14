@@ -1,12 +1,11 @@
-﻿using RentOut.Attributes;
-using RentOut.Core.Contracts;
-using RentOut.Core.Models.Car;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using RentOut.Attributes;
+using RentOut.Core.Contracts;
 using RentOut.Core.Exceptions;
 using RentOut.Core.Extensions;
-using RentOut.Core.Constants;
+using RentOut.Core.Models.Car;
+using System.Security.Claims;
 using static RentOut.Core.Constants.MessageConstants;
 
 namespace RentOut.Controllers

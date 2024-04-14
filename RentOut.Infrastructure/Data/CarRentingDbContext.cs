@@ -7,9 +7,19 @@ namespace RentOut.Infrastructure.Data
 {
     public class CarRentingDbContext : IdentityDbContext<ApplicationUser>
     {
-        public CarRentingDbContext(DbContextOptions<CarRentingDbContext> options)
-            : base(options)
+        private bool _seedDb;
+        public CarRentingDbContext(DbContextOptions<CarRentingDbContext>
+            options, bool seed = true) : base(options)
         {
+            if (Database.IsRelational())
+            {
+                Database.Migrate();
+            }
+            else
+            {
+                Database.EnsureCreated();
+            }
+            _seedDb = seed;
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -19,6 +29,20 @@ namespace RentOut.Infrastructure.Data
             builder.ApplyConfiguration(new CategoryConfiguration());
             builder.ApplyConfiguration(new CarConfiguration());
             builder.ApplyConfiguration(new UserClaimsConfiguration());
+
+            builder
+                .Entity<Car>()
+                .HasOne(c => c.Category)
+                .WithMany(c => c.Cars)
+                .HasForeignKey(c => c.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .Entity<Car>()
+                .HasOne(c => c.Rentier)
+                .WithMany()
+                .HasForeignKey(c => c.RentierId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(builder);
         }
