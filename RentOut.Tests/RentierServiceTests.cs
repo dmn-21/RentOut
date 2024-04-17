@@ -8,7 +8,6 @@ using RentOut.Core.Services;
 using RentOut.Infrastructure.Data;
 using RentOut.Infrastructure.Data.Common;
 using RentOut.Infrastructure.Data.Models;
-using RentOut.Infrastructure.Migrations;
 
 namespace RentOut.Tests
 {
