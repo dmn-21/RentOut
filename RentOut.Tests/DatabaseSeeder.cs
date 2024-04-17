@@ -12,6 +12,7 @@ namespace RentOut.Tests
         {
             RentierUser = new ApplicationUser()
             {
+                Id = "77777",
                 UserName = "rentier@mail.com",
                 NormalizedUserName = "rentier@mail.com",
                 Email = "rentier@mail.com",
@@ -26,6 +27,7 @@ namespace RentOut.Tests
             };
             RenterUser = new ApplicationUser()
             {
+                Id = "777",
                 UserName = "guest@mail.com",
                 NormalizedUserName = "GUEST@MAIL.COM",
                 Email = "guest@mail.com",
