@@ -248,7 +248,7 @@ namespace RentOut.Tests
         }
 
         [Test]
-        public async Task HasRentierWithIdAsync()
+        public async Task TestAllAsync()
         {
             var loggerMock = new Mock<ILogger<CarService>>();
             logger = loggerMock.Object;
@@ -256,21 +256,25 @@ namespace RentOut.Tests
 
             IQueryable<Car> cars = new List<Car>()
             {
-                new Car() { Id = 7, Town = "Varna",  ImageUrl = "", Title = "", Description = "" },
-                new Car() { Id = 77, Town = "Burgas", ImageUrl = "", Title = "", Description = "" }
+                new Car() { Id = 1 },
+                new Car() { Id = 2 },
+                new Car() { Id = 3 },
+                new Car() { Id = 4 },
+                new Car() { Id = 5 },
             }
             .AsQueryable();
-
 
             repoMock.Setup(r => r.AllReadOnly<Car>())
                 .Returns(cars);
             repo = repoMock.Object;
             carService = new CarService(repo, logger);
 
-            var result = await carService.HasRentierWithIdAsync(7, "");
+            var carCollection = await carService.LastTwoCarsAsync();
 
-            Assert.False(result);
+            Assert.That(0, Is.EqualTo(carCollection.Count()));
+            Assert.That(carCollection.Any(c => c.Id == 1), Is.False);
         }
+
 
 
         [TearDown]
