@@ -1,0 +1,15 @@
+.container-fluid {
+    background-color: rgba(255,99,71,0.2);
+}
+
+body {
+    background-color: rgb(232,232,232);
+}
+
+.d-block {
+    max-width: 40rem;
+}
+
+#carouselExampleControls {
+    max-width: 40rem;
+}

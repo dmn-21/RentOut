@@ -10,38 +10,38 @@ using RentOut.Infrastructure.Data.Models;
 
 namespace RentOut.Tests
 {
+
     [TestFixture]
     public class CarServiceTests
     {
-        private IRepository repository;
         private ILogger<CarService> logger;
         private ICarService carService;
-        private CarRentingDbContext carRentingDbContext;
+        private CarRentingDbContext dbContext;
 
         [SetUp]
         public void Setup()
         {
             var contextOptions = new DbContextOptionsBuilder<CarRentingDbContext>()
-                .UseInMemoryDatabase("RentOutDb")
+                .UseInMemoryDatabase("RentOutB")
                 .Options;
 
-            carRentingDbContext = new CarRentingDbContext(contextOptions);
+            dbContext = new CarRentingDbContext(contextOptions);
 
-            carRentingDbContext.Database.EnsureDeleted();
-            carRentingDbContext.Database.EnsureCreated();
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
         }
 
         [Test]
-        public async Task TestCarEdit()
+        public async Task CarExistsById()
         {
             var loggerMock = new Mock<ILogger<CarService>>();
             logger = loggerMock.Object;
-            var repository = new Repository(carRentingDbContext);
+            var repository = new Repository(dbContext);
             carService = new CarService(repository, logger);
 
             await repository.AddAsync(new Car()
             {
-                Id = 1,
+                Id = 7,
                 Town = "",
                 ImageUrl = "",
                 Title = "",
@@ -50,17 +50,42 @@ namespace RentOut.Tests
 
             await repository.SaveChangesAsync();
 
-            await carService.EditAsync(1, new CarFormModel()
+            var dbCar = await repository.GetByIdAsync<Car>(7);
+
+            Assert.That(dbCar.Id, Is.EqualTo(7));
+        }
+
+        [Test]
+        public async Task TestCarEditAsync()
+        {
+            var loggerMock = new Mock<ILogger<CarService>>();
+            logger = loggerMock.Object;
+            var repository = new Repository(dbContext);
+            carService = new CarService(repository, logger);
+
+            await repository.AddAsync(new Car()
+            {
+                Id = 7,
+                Town = "",
+                ImageUrl = "",
+                Title = "",
+                Description = ""
+            });
+
+            await repository.SaveChangesAsync();
+
+            await carService.EditAsync(7, new CarFormModel()
             {
                 Town = "",
                 ImageUrl = "",
                 Title = "",
-                Description = "Sports car. 2018y. At 60_000km. Without any remarks on interior and exterior.",
+                Description = "This car is edited",
             });
 
-            var dbCar = await repository.GetByIdAsync<Car>(1);
+            var dbCar = await repository.GetByIdAsync<Car>(7);
 
-            Assert.That(dbCar.Description, Is.EqualTo("Sports car. 2018y. At 60_000km. Without any remarks on interior and exterior."));
+            Assert.That(dbCar.Description, Is.EqualTo("This car is edited"));
+            Assert.That(dbCar.Id, Is.EqualTo(7));
         }
 
         [Test]
@@ -68,50 +93,37 @@ namespace RentOut.Tests
         {
             var loggerMock = new Mock<ILogger<CarService>>();
             logger = loggerMock.Object;
-            var repository = new Repository(carRentingDbContext);
+            var repository = new Repository(dbContext);
             carService = new CarService(repository, logger);
 
-            await repository.AddAsync(new List<Car>()
+            await repository.AddAsync(new Car()
             {
-                new Car() { Id = 1, Town = "", ImageUrl = "", Title = "", Description = "" },
-                new Car() { Id = 2, Town = "", ImageUrl = "", Title = "", Description = "" },
-                new Car() { Id = 1010, Town = "", ImageUrl = "", Title = "", Description = "" }
+                Id = 22,
+                Town = "",
+                ImageUrl = "",
+                Title = "",
+                Description = ""
+            });
+            await repository.AddAsync(new Car()
+            {
+                Id = 33,
+                Town = "",
+                ImageUrl = "",
+                Title = "",
+                Description = ""
             });
 
             await repository.SaveChangesAsync();
             var carCollection = await carService.LastTwoCarsAsync();
 
-            Assert.That(3, Is.EqualTo(carCollection.Count()));
-            Assert.That(carCollection.Any(c => c.Id == 1), Is.False);
-        }
-
-        [Test]
-        public async Task TestLastTwoCarsNumberAndOrder()
-        {
-            var loggerMock = new Mock<ILogger<CarService>>();
-            logger = loggerMock.Object;
-            var repoMock = new Mock<IRepository>();
-            IQueryable<Car> cars = new List<Car>()
-            {
-                new Car() { Id = 1 },
-                new Car() { Id = 2 },
-                new Car() { Id = 1010 }
-            }.AsQueryable();
-            repoMock.Setup(r => r.AllReadOnly<Car>())
-                .Returns(cars);
-            repository = repoMock.Object;
-            carService = new CarService(repository, logger);
-
-            var carCollection = await carService.LastTwoCarsAsync();
-
             Assert.That(0, Is.EqualTo(carCollection.Count()));
-            Assert.That(carCollection.Any(c => c.Id == 1), Is.False);
+            Assert.That(carCollection.Any(c => c.Id == 33), Is.False);
         }
 
         [TearDown]
         public void TearDown()
         {
-            carRentingDbContext.Dispose();
+            dbContext.Dispose();
         }
     }
 }

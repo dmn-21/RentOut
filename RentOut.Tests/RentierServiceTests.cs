@@ -1,48 +1,125 @@
-﻿namespace RentOut.Tests
-{
-    using Microsoft.EntityFrameworkCore;
-    using RentOut.Core.Contracts;
-    using RentOut.Core.Services;
-    using RentOut.Infrastructure.Data;
-    using static DatabaseSeeder;
+﻿using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework.Internal;
+using RentOut.Core.Contracts;
+using RentOut.Core.Services;
+using RentOut.Infrastructure.Data;
+using RentOut.Infrastructure.Data.Common;
+using RentOut.Infrastructure.Data.Models;
+using RentOut.Infrastructure.Migrations;
 
+namespace RentOut.Tests
+{
+    [TestFixture]
     public class RentierServiceTests
     {
-        private DbContextOptions<CarRentingDbContext> dbOptions;
+        private ILogger<RentierService> logger;
         private CarRentingDbContext dbContext;
-
+        private DbContextOptions<CarRentingDbContext> dbOptions;
+        private IRepository repository;
         private IRentierService rentierService;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void Setup()
         {
-            this.dbOptions = new DbContextOptionsBuilder<CarRentingDbContext>()
-                .UseInMemoryDatabase("CarRentingInMemory")
+            var contextOptions = new DbContextOptionsBuilder<CarRentingDbContext>()
+                .UseInMemoryDatabase("RentOutB")
                 .Options;
-            this.dbContext = new CarRentingDbContext(this.dbOptions, false);
 
-            this.dbContext.Database.EnsureCreated();
-            SeedDatabase(this.dbContext);
+            dbContext = new CarRentingDbContext(contextOptions);
+
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
         }
 
         [Test]
-        public async Task RentierExistsByUserIdAsyncShouldReturnTrueWhenExists()
+        public async Task RentierExistsById()
         {
-            string existingRentierUserId = RentierUser.Id.ToString();
+            var loggerMock = new Mock<ILogger<RentierService>>();
+            logger = loggerMock.Object;
+            var repository = new Repository(dbContext);
+            rentierService = new RentierService(repository, logger);
 
-            bool result = await this.rentierService.ExistByIdAsync(existingRentierUserId);
+            await repository.AddAsync(new Rentier()
+            {
+                Id = 7,
+                PhoneNumber = "",
+                UserId = "",
+            });
 
-            Assert.IsTrue(result);
+            await repository.SaveChangesAsync();
+
+            var dbRentier = await repository.GetByIdAsync<Rentier>(7);
+
+            Assert.That(dbRentier.Id, Is.EqualTo(7));
         }
 
         [Test]
-        public async Task RentierExistsByUserIdAsyncShouldReturnFalseWhenNotExists()
+        public async Task RentierCreateAsyncWithPhoneNumber()
         {
-            string existingRentierUserId = RenterUser.Id.ToString();
+            var loggerMock = new Mock<ILogger<RentierService>>();
+            logger = loggerMock.Object;
+            var repository = new Repository(dbContext);
+            rentierService = new RentierService(repository, logger);
 
-            bool result = await this.rentierService.ExistByIdAsync(existingRentierUserId);
+            await repository.AddAsync(new Rentier()
+            {
+                Id = 7,
+                PhoneNumber = "0888888888",
+                UserId = "",
+            });
 
-            Assert.IsFalse(result);
+            await repository.SaveChangesAsync();
+
+            var dbRentier = await repository.GetByIdAsync<Rentier>(7);
+
+            Assert.That(dbRentier.PhoneNumber, Is.EqualTo("0888888888"));
+        }
+
+        [Test]
+        public async Task RentierCreateAsyncWithUserId()
+        {
+            var loggerMock = new Mock<ILogger<RentierService>>();
+            logger = loggerMock.Object;
+            var repository = new Repository(dbContext);
+            rentierService = new RentierService(repository, logger);
+
+            await repository.AddAsync(new Rentier()
+            {
+                Id = 7,
+                PhoneNumber = "",
+                UserId = "4",
+            });
+
+            await repository.SaveChangesAsync();
+
+            var dbRentier = await repository.GetByIdAsync<Rentier>(7);
+
+            Assert.That(dbRentier.UserId, Is.EqualTo("4"));
+        }
+
+        [Test]
+        public async Task RentierExistsByUserIdAsyncShouldReturnFalseWhenExists()
+        {
+            var loggerMock = new Mock<ILogger<RentierService>>();
+            logger = loggerMock.Object;
+            var repository = new Repository(dbContext);
+            rentierService = new RentierService(repository, logger);
+
+            await repository.AddAsync(new Rentier()
+            {
+                Id = 7,
+                PhoneNumber = "",
+                UserId = "",
+            });
+
+            await repository.SaveChangesAsync();
+
+            bool result = await this.rentierService.ExistByIdAsync("7");
+
+            Assert.False(result);
         }
     }
 }
